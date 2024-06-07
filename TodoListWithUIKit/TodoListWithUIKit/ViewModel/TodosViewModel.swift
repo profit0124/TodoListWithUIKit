@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 enum CollectionViewSection: CaseIterable {
     case main
@@ -22,43 +23,48 @@ final class TodosViewModel {
             cell.configuration(todo: todo, delegate: self)
             return cell
         }
+        fetchTodos()
+    }
+    
+    func fetchTodos() {
+        let request = Todo.fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \Todo.deadline, ascending: false)]
+        do {
+            self.todos = try PersistenceManager.shared.container.viewContext.fetch(request)
+        } catch {
+            print(error)
+        }
         updateView()
     }
     
     func addTodo(_ todo: Todo) {
-        todos.append(todo)
-        updateView()
+        fetchTodos()
     }
     
     func doneTodo(_ todo: Todo) {
-        if let index = todos.firstIndex(of: todo) {
-            var todo = todo
-            todo.isCompleted = true
-            todos[index] = todo
-            updateView()
+        let todo = todo
+        todo.isCompleted = true
+        do {
+            try PersistenceManager.shared.container.viewContext.save()
+        } catch {
+            print(error)
         }
+        fetchTodos()
     }
     
     func updateTodo(_ todo: Todo) {
-        for index in 0..<todos.count {
-            if todos[index].id == todo.id {
-                todos[index] = todo
-                updateView()
-                break
-            }
-        }
+        fetchTodos()
     }
     
     func deleteTodo(_ todo: Todo) {
-        if let index = todos.firstIndex(of: todo) {
-            todos.remove(at: index)
-            updateView()
-        }
+        PersistenceManager.shared.container.viewContext.delete(todo)
+        fetchTodos()
     }
     
     func updateView() {
-//        let temp = NSDiffableDataSourceSnapshot<CollectionViewSection, Todo>()
-//        self.dataSource.apply(temp, animatingDifferences: true)
+        let temp = NSDiffableDataSourceSnapshot<CollectionViewSection, Todo>()
+        self.dataSource.apply(temp, animatingDifferences: false)
+        
         let filtered = self.todos.filter({ !$0.isCompleted })
         var snapshopt = NSDiffableDataSourceSnapshot<CollectionViewSection, Todo>()
         snapshopt.appendSections([.main])
@@ -80,12 +86,10 @@ extension TodosViewModel: ListDelegate {
 
 extension TodosViewModel: AddDelegate {
     func addAction(_ todo: Todo) {
-        print("add Todo")
         self.addTodo(todo)
     }
     
     func updateAction(_ todo: Todo) {
-        print("update Todo")
         self.updateTodo(todo)
     }
 }
