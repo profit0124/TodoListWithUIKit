@@ -90,7 +90,7 @@ class AddTodoViewViewController: UIViewController {
         })
         self.button.setTitle(vm.addMode.rawValue, for: .normal)
         self.button.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
-        self.changeButtonStatus(!vm.todo.title.isEmpty)
+        self.changeButtonStatus(!vm.todo.unwrappedTitle.isEmpty)
         self.titleTextField.text = vm.todo.title
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: self, action: #selector(dismissAction))
         self.datePicker.addTarget(self, action: #selector(changeDate(_ :)), for: .valueChanged)
@@ -125,7 +125,7 @@ class AddTodoViewViewController: UIViewController {
     }
     
     @objc func changeDate(_ sender: UIDatePicker) {
-        vm.todo.deadLine = sender.date
+        vm.todo.deadline = sender.date
     }
 }
 

@@ -27,7 +27,7 @@ class TodoCellViewCollectionViewCell: UICollectionViewCell {
         
         flexContainerView.flex.padding(16).direction(.column).justifyContent(.spaceBetween).define({
             $0.addItem().direction(.row).justifyContent(.spaceBetween).define({
-                $0.addItem(titleView)
+                $0.addItem(titleView).grow(1)
                 $0.addItem(deleteButton).size(20)
             })
             
@@ -85,9 +85,10 @@ class TodoCellViewCollectionViewCell: UICollectionViewCell {
     private let doneButton: CustomToggleButton = CustomToggleButton(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
     
     func configuration(todo: Todo, delegate: ListDelegate) {
-        titleView.text = todo.title
-        deadlineDateView.text = todo.deadLine.changeToString()
-        deadlineTimeView.text = todo.deadLine.formatted(date: .omitted, time: .shortened)
+        titleView.text = todo.unwrappedTitle
+        deadlineDateView.text = todo.unwrappedDeadline.changeToString()
+        deadlineTimeView.text = todo.unwrappedDeadline.formatted(date: .omitted, time: .shortened)
+        self.doneButton.isCompleted = todo.isCompleted
         self.todo = todo
         self.delegate = delegate
         layoutIfNeeded()
