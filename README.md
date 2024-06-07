@@ -3,6 +3,7 @@
 #### 아키텍쳐
 - MVVM
 
-#### 사용라이브러리
+#### 기술스택
 - PinLayout
 - FlexLayout
+- CoreData
