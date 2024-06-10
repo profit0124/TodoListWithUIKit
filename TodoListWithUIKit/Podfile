@@ -6,6 +6,8 @@ target 'TodoListWithUIKit' do
 
 pod 'FlexLayout'
 pod 'PinLayout'
+pod 'RxSwift', '6.7.1'
+pod 'RxCocoa', '6.7.1'
   # Pods for TodoListWithUIKit
 
 end
